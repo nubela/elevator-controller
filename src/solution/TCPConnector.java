@@ -16,22 +16,18 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class TCPConnector {
 
-	public static void main(String[] args) {
-		TCPConnector tcpConnector = new TCPConnector("localhost", 4711, null);
-	}
-
 	Socket socket;
+
 	PrintWriter out;
 	BufferedReader in;
 	TCPListener listener;
-
 	List<String> incoming = new LinkedList<String>();
 
 	Lock lock = new ReentrantLock();
 
 	public TCPConnector(String host, int port, TCPListener listener) {
 		try {
-			socket = new Socket("127.0.0.1", 4711);
+			socket = new Socket(host, port);
 			out = new PrintWriter(socket.getOutputStream(), true);
 			in = new BufferedReader(new InputStreamReader(
 					socket.getInputStream()));
@@ -46,14 +42,16 @@ public class TCPConnector {
 
 		// spawn reader thread
 		new TCPReader(this).start();
-		System.out.println("works");
 	}
 
 	public void read() {
 		lock.lock();
 		try {
-			if (in.ready())
-				incoming.add(in.readLine());
+			if (in.ready()) {
+				String readline = in.readLine();
+				incoming.add(readline);
+				System.out.println("Read: " + readline);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -64,10 +62,14 @@ public class TCPConnector {
 	public void write(String writeline) {
 		lock.lock();
 		try {
-			out.write(writeline);
+			out.println(writeline);
 		} finally {
 			lock.unlock();
 		}
+	}
+
+	public static void main(String[] args) {
+		TCPConnector tcpConnector = new TCPConnector("localhost", 4711, null);
 	}
 
 }
