@@ -1,10 +1,10 @@
 package solution;
 
-public class Instruction {
+public class InstructionManager {
 
 	ControlManager controlManager;
 
-	public Instruction(ControlManager controlManager) {
+	public InstructionManager(ControlManager controlManager) {
 		this.controlManager = controlManager;
 	}
 
@@ -23,7 +23,7 @@ public class Instruction {
 	 * @param lift
 	 * @return Translated String
 	 */
-	public void inspectPositionOfLift(Lift lift) {
+	public void getPositionOfLift(Lift lift) {
 		controlManager.getTcpConnector().write("w " + lift.getElevatorId());
 	}
 

@@ -32,7 +32,6 @@ public class UpdateManager implements TCPListener {
 			Lift lift = controlManager.getLiftById(new Integer(
 					updateStringTokens[1]));
 			lift.setPosition(new Double(updateStringTokens[2]));
-			System.out.println("works");
 		}
 
 	}
