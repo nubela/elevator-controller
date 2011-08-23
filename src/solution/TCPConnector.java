@@ -48,9 +48,7 @@ public class TCPConnector {
 		lock.lock();
 		try {
 			if (in.ready()) {
-				String readline = in.readLine();
-				incoming.add(readline);
-				System.out.println("Read: " + readline);
+				listener.update(in.readLine());
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

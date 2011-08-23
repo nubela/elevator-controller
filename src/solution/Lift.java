@@ -3,7 +3,7 @@ package solution;
 public class Lift {
 
 	Status status;
-	Status position;
+	Double position;
 	int elevatorId;
 
 	public Lift(int elevatorId) {
@@ -14,7 +14,7 @@ public class Lift {
 		return elevatorId;
 	}
 
-	public Status getPosition() {
+	public Double getPosition() {
 		return position;
 	}
 
@@ -26,7 +26,7 @@ public class Lift {
 		this.elevatorId = elevatorId;
 	}
 
-	public void setPosition(Status position) {
+	public void setPosition(Double position) {
 		this.position = position;
 	}
 

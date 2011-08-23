@@ -2,13 +2,19 @@ package solution;
 
 public class Instruction {
 
+	ControlManager controlManager;
+
+	public Instruction(ControlManager controlManager) {
+		this.controlManager = controlManager;
+	}
+
 	/**
 	 * Get all Lift's velocity.
 	 * 
 	 * @return Translated String
 	 */
-	public String getAllLiftsVelocity() {
-		return "v";
+	public void getAllLiftsVelocity() {
+		controlManager.getTcpConnector().write("v");
 	}
 
 	/**
@@ -17,8 +23,8 @@ public class Instruction {
 	 * @param lift
 	 * @return Translated String
 	 */
-	public String inspectPositionOfLift(Lift lift) {
-		return "w " + lift.getElevatorId();
+	public void inspectPositionOfLift(Lift lift) {
+		controlManager.getTcpConnector().write("w " + lift.getElevatorId());
 	}
 
 	/**
@@ -29,8 +35,9 @@ public class Instruction {
 	 * @param direction
 	 * @return Translated String
 	 */
-	public String moveElevator(Lift lift, int direction) {
-		return "m " + lift.getElevatorId() + " " + direction;
+	public void moveElevator(Lift lift, int direction) {
+		controlManager.getTcpConnector().write(
+				"m " + lift.getElevatorId() + " " + direction);
 	}
 
 	/**
@@ -40,8 +47,9 @@ public class Instruction {
 	 * @param open
 	 * @return Translated String
 	 */
-	public String openDoor(Lift lift, int open) {
-		return "d " + lift.getElevatorId() + " " + open;
+	public void openDoor(Lift lift, int open) {
+		controlManager.getTcpConnector().write(
+				"d " + lift.getElevatorId() + " " + open);
 	}
 
 	/**
@@ -51,8 +59,9 @@ public class Instruction {
 	 * @param floorNumber
 	 * @return Translated String
 	 */
-	public String setLiftFloorIndicator(Lift lift, int floorNumber) {
-		return "s " + lift.getElevatorId() + " " + floorNumber;
+	public void setLiftFloorIndicator(Lift lift, int floorNumber) {
+		controlManager.getTcpConnector().write(
+				"s " + lift.getElevatorId() + " " + floorNumber);
 	}
 
 }
