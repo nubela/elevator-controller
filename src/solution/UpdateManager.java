@@ -28,10 +28,23 @@ public class UpdateManager implements TCPListener {
 			updateType = UpdateType.token2UpdateEnum(updateStringTokens[0]);
 		}
 
-		if (updateType == UpdateType.FloorPosition) {
+		if (updateType == UpdateType.FLOOR_POSITION) {
+			// notify lift
 			Lift lift = controlManager.getLiftById(new Integer(
 					updateStringTokens[1]));
 			lift.setPosition(new Double(updateStringTokens[2]));
+		}
+
+		else if (updateType == UpdateType.LEVEL_REQUEST) {
+			// notify control
+			controlManager.levelRequest(new Integer(updateStringTokens[1]),
+					new Integer(updateStringTokens[2]));
+		}
+
+		else if (updateType == UpdateType.IN_LEFT_BUTTON_PRESS) {
+			// notify lift
+			controlManager.getLiftById(new Integer(updateStringTokens[1]))
+					.buttonPress(new Integer(updateStringTokens[2]));
 		}
 
 	}
@@ -43,7 +56,7 @@ public class UpdateManager implements TCPListener {
 	}
 
 	public enum UpdateType {
-		FloorPosition("f");
+		FLOOR_POSITION("f"), LEVEL_REQUEST("b"), IN_LEFT_BUTTON_PRESS("p");
 
 		String token;
 
@@ -51,9 +64,19 @@ public class UpdateManager implements TCPListener {
 			this.token = token;
 		}
 
+		public String getToken() {
+			return token;
+		}
+
+		public void setToken(String token) {
+			this.token = token;
+		}
+
 		static UpdateType token2UpdateEnum(String token) {
-			for (UpdateType typeOfUpdate : UpdateType.values())
-				return typeOfUpdate;
+			for (UpdateType typeOfUpdate : UpdateType.values()) {
+				if (typeOfUpdate.getToken().equals(token))
+					return typeOfUpdate;
+			}
 			throw new RuntimeException(
 					"Found new update token that is not in enum: " + token);
 		}

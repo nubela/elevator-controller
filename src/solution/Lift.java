@@ -42,8 +42,47 @@ public class Lift {
 		updated();
 	}
 
-	private void checkLevelStoppage() {
+	public void buttonPress(Integer level) {
+		if (level == 32000) {
 
+		}
+
+		if (direction * (level - position.intValue()) > 0) {
+			addLevelStop(direction, level);
+		} else if (direction * (level - position.intValue()) < 0) {
+			addLevelStop(direction * -1, level);
+		} else {
+			if (level - position.intValue() > 0) {
+				addLevelStop(1, level);
+			} else if (level - position.intValue() < 0) {
+				addLevelStop(-11, level);
+			} else if ((direction == 0) && (level == position.intValue())) {
+				openCloseDoor();
+			}
+		}
+
+	}
+
+	public ControlManager getControlManager() {
+		return controlManager;
+	}
+
+	public int getDirection() {
+		return direction;
+	}
+
+	public List<Integer> getDirectionalQueue() {
+		if (direction == 1)
+			return getUpwardsQueue();
+		else if (direction == -1)
+			return getDownwardsQueue();
+		else
+			throw new RuntimeException(
+					"Trying to get directional queue when lift is not moving!");
+	}
+
+	public List<Integer> getDownwardsQueue() {
+		return downwardsQueue;
 	}
 
 	public int getElevatorId() {
@@ -54,6 +93,59 @@ public class Lift {
 		return position;
 	}
 
+	public Double getPositionDirty() {
+		return positionDirty;
+	}
+
+	public Double getPOSN_TOLERANCE() {
+		return POSN_TOLERANCE;
+	}
+
+	public int getTotalLevels() {
+		return totalLevels;
+	}
+
+	public List<Integer> getUpwardsQueue() {
+		return upwardsQueue;
+	}
+
+	public Boolean isLevelInDirection(Integer level) {
+		return (direction * (level - position.intValue()) > 0);
+	}
+
+	/**
+	 * Open and closes a door.
+	 */
+	private void openCloseDoor() {
+		// open door
+		controlManager.getInstructionManager().openDoor(this, 1);
+		try {
+			Thread.sleep(2000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		// close door
+		controlManager.getInstructionManager().openDoor(this, -1);
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		updated();
+	}
+
+	public void setControlManager(ControlManager controlManager) {
+		this.controlManager = controlManager;
+	}
+
+	public void setDirection(int direction) {
+		this.direction = direction;
+	}
+
+	public void setDownwardsQueue(List<Integer> downwardsQueue) {
+		this.downwardsQueue = downwardsQueue;
+	}
+
 	public void setElevatorId(int elevatorId) {
 		this.elevatorId = elevatorId;
 	}
@@ -61,6 +153,18 @@ public class Lift {
 	public void setPosition(Double position) {
 		this.position = position;
 		updated();
+	}
+
+	public void setPositionDirty(Double positionDirty) {
+		this.positionDirty = positionDirty;
+	}
+
+	public void setTotalLevels(int totalLevels) {
+		this.totalLevels = totalLevels;
+	}
+
+	public void setUpwardsQueue(List<Integer> upwardsQueue) {
+		this.upwardsQueue = upwardsQueue;
 	}
 
 	/**
@@ -134,29 +238,13 @@ public class Lift {
 					direction = 0;
 					downwardsQueue.remove(0);
 				}
-
 			}
 
 			if (direction == 0) {
 				// stop
 				controlManager.getInstructionManager().moveElevator(this,
 						direction);
-				// open door
-				controlManager.getInstructionManager().openDoor(this, 1);
-				try {
-					Thread.sleep(2000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-				// close door
-				controlManager.getInstructionManager().openDoor(this, -1);
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-
-				updated();
+				openCloseDoor();
 			}
 
 		}

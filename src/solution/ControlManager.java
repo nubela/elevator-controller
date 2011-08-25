@@ -1,7 +1,10 @@
 package solution;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 public class ControlManager {
 
@@ -50,6 +53,40 @@ public class ControlManager {
 		return updateManager;
 	}
 
+	/**
+	 * Manages requests and coordinates lifts to take up the role.
+	 * 
+	 * @param level
+	 * @param direction
+	 */
+	public void levelRequest(Integer level, Integer direction) {
+		Map<Lift, Integer> difference = new HashMap<Lift, Integer>();
+
+		for (Lift l : lifts) {
+			if (l.getDirection() == 0) {
+				difference.put(l, Math.abs(level - l.getPosition().intValue()));
+			} else if (!l.isLevelInDirection(level)) {
+				difference.put(l, Math.abs(level - l.getPosition().intValue())
+						+ totalLevels);
+			}
+		}
+
+		Integer smallest = 32000;
+		for (Integer i : difference.values()) {
+			if (i < smallest) {
+				smallest = i;
+			}
+		}
+
+		for (Entry<Lift, Integer> e : difference.entrySet()) {
+			if (e.getValue() == smallest) {
+				e.getKey().buttonPress(level);
+				return;
+			}
+		}
+
+	}
+
 	public void setInstructionManager(InstructionManager instructionManager) {
 		this.instructionManager = instructionManager;
 	}
@@ -73,8 +110,6 @@ public class ControlManager {
 	public static void main(String[] args) {
 		ControlManager controlManager = new ControlManager("localhost", 4711,
 				2, 5);
-		controlManager.getLiftById(1).addLevelStop(1, 5);
-		controlManager.getLiftById(1).addLevelStop(-1, 0);
 	}
 
 }
